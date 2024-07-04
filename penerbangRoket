@@ -1,4 +1,5 @@
 int t = 1;
+/////pandu//////
 // Variabel global
 float x, y, easing = 0.05, rotasi = 30;
 float prevMouseX, prevMouseY;
@@ -6,38 +7,42 @@ boolean tanganGerak = false, kakiGerak = false;
 float kaki1Y = 0;
 float kaki2Y = 0;
 
+//////abi///////
 float cloud1X, cloud2X, cloud3X, cloud4X, cloud5X;
 float[] cloudX = new float[6]; // Array untuk menyimpan posisi awan
 
 // Variabel untuk animasi pasang surut air laut
 float waveOffset = 0;
 
+//////rahman/////
 // Variabel untuk pompa dan selang
 float pompaX, pompaY; // Posisi pompa
 float pompaM, pompaN; // Posisi pompa
 float selangX, selangY; // Posisi ujung selang horizontal pertama
-float selangM, selangN; // Posisi ujung selang horizontal scene 3
+float selangM, selangN; // Posisi ujung selang horizontal scene 3z
 float selangA, selangB; // Posisi ujung selang horizontal scene 3, 2
 float selangHorizontalPanjang = 150; // Panjang selang horizontal
 float selangVertikalPanjang = 60; // Panjang selang vertikal
 boolean pompaAktif = false;
-boolean pompaAktif2 = false; // Status pompa aktif atau tidak
+boolean pompaAktif2 = false;// Status pompa aktif atau tidak
 
-// Variabel untuk animasi roket
-boolean roketTerbang = false;
-float roketX = 1025;
-float roketY = 500;
-float roketSpeed = 3;
+// Variabel untuk pergerakan Abe di scene2
+boolean scene2Initialized = false;
+float targetX = 400; // Posisi akhir X
+float targetY = 700; // Posisi akhir Y
+float laju = 0.2; // Kecepatan Abe
 
 void setup() {
   size(1280, 720);
   frameRate(60);
 
+  /////pandu//////
   noStroke();
   noCursor();
   x = width / 2;
   y = height / 2;
 
+  //////abi///////
   // Inisialisasi posisi awan
   cloud1X = 300;
   cloud2X = 900;
@@ -53,6 +58,7 @@ void setup() {
   cloudX[4] = 200;
   cloudX[5] = 1600;
 
+  //////rahmamnn/////
   // Inisialisasi posisi pompa dan selang
   pompaX = 900; // Sesuaikan sesuai dengan layout
   pompaY = 600;
@@ -67,30 +73,33 @@ void setup() {
   selangA = pompaM + 10; // Posisi awal X selang sedikit ke kanan
   selangB = pompaN + 80; // Posisi awal Y selang di bawah pompa
   pompaAktif2 = false;
+  
 }
 
 void draw() {
-  background(135, 206, 235); // Langit biru
-  
+
   //time 1-5 tampilkan scene 1
-  if ((t > 0) && (t <= 4000)) {
-    scene1();
+  if ((t > 0) && (t <= 500)) {
+    scene2();
   }
 
   //time 6-10 tampilkan scene 2
-  if ((t >= 4001) && (t < 5000)) {
+  if ((t >= 501) && (t < 10000)) {
     scene2();
   }
 
   //time 11-15 tampilkan scene 3
-  if ((t >= 5001) && (t < 10000)) {
+  if ((t >= 10001) && (t < 15000)) {
     scene3();
   }
 
   t++;
+
 }
 
 void scene1() {
+  background(135, 206, 235); // Langit biru
+
   // Memperbarui posisi awan
   updateCloudPositions();
 
@@ -118,6 +127,7 @@ void scene1() {
   // Menggambar Pohon Cemara
   drawPineTrees();
 
+  ///ABEE///
   // Update posisi x dan y berdasarkan pergerakan mouse
   float targetX = mouseX;
   float dx = targetX - x;
@@ -138,29 +148,22 @@ void scene1() {
     }
     kakiGerak = !kakiGerak; // Toggle kaki yang bergerak
   }
-  
   // Memanggil fungsi untuk menggambar dan menggerakkan pompa dan selang
   gambarPompaDanSelang(900, 600);
 
-  // Menggambar Abe
+  //gerak abe
   abe(x, y, rotasi);
 
   // Simpan posisi mouse saat ini untuk digunakan pada frame berikutnya
   prevMouseX = mouseX;
   prevMouseY = mouseY;
   
-  // Menggambar dan menggerakkan roket jika selang telah mencapai posisi akhir
-  if (selangX >= 900 + selangHorizontalPanjang && selangY <= 600 + 80 - selangVertikalPanjang) {
-    roketTerbang = true;
-  }
-  if (roketTerbang) {
-    gambarRoket(roketX, roketY);
-    roketY -= roketSpeed;
-  } else {
-    gambarRoket(1025, 500);
-  }
+    
+  // Menggambar roket pada posisi yang diinginkan
+  gambarRoket(1025, 500);
 }
 
+/////////rahman//////////
 void gambarPompaDanSelang(float x, float y) {
   fill(255, 255, 0); // Warna kuning untuk pompa
   rect(x, y + 40, 20, 50); // Menggambar badan pompa
@@ -199,6 +202,7 @@ void gambarPompaDanSelang(float x, float y) {
   rect(x - 15, y + 75, 50, 10);
 }
 
+//////////Pandu///////////
 void mousePressed() {
   if (dist(mouseX, mouseY, pompaX, pompaY) < 40) {
     pompaAktif = true;
@@ -436,6 +440,7 @@ void gambarRoket(float x, float y) {
            x + 190 * scaleFactor, y + 300 * scaleFactor);
 }
 
+///////Abi////////
 void updateCloudPositions() {
   cloud1X -= 1;
   cloud2X -= 1.5;
@@ -478,7 +483,7 @@ void drawCloud(float x, float y) {
   ellipse(x + 100, y, 150, 80);
 }
 
-// Laut ada gradient nyaa
+//Laut ada gradient nyaa
 void drawSea() {
   color startColor = color(0, 105, 148);
   color endColor = color(0, 154, 205);
@@ -609,30 +614,39 @@ void drawPineTree(int x, int y) {
 }
 
 void scene2() {
-  // Update posisi awan
+  if (!scene2Initialized) {
+    // Mengatur posisi awal Abe di scene2
+    x = 470;
+    y = 300;
+    scene2Initialized = true;
+  }
+
+  background(135, 206, 235);
+
+  // Menggambar Matahari
+  drawSun(1000, 100, 50);
+
+  // Update posisi awan dan menggambar awan
   updateCloudPositions();
   drawClouds();
 
-  // Menggambar Matahari
-  drawSun(1000, 100, 50); 
-  
   // Memanggil Jalan, Pantai, Garis Jalan, Laut
   drawPantai2();
   drawJalan2();
   drawGarisJalan();
   drawWave();
 
-  // Update posisi x dan y berdasarkan pergerakan mouse
-  float targetX = mouseX;
+  // Menggerakkan Abe ke posisi target
   float dx = targetX - x;
-  x += dx * easing;
-
-  float targetY = mouseY;
   float dy = targetY - y;
-  y += dy * easing;
+  float distance = dist(x, y, targetX, targetY);
 
-  // Update posisi kaki berdasarkan pergerakan mouse
-  if (mouseY != prevMouseY) {
+  if (distance > laju) {
+    float angle = atan2(dy, dx);
+    x += cos(angle) * laju;
+    y += sin(angle) * laju;
+    
+    // Update posisi kaki berdasarkan pergerakan
     if (kakiGerak) {
       kaki1Y = -5;
       kaki2Y = 0;
@@ -641,8 +655,13 @@ void scene2() {
       kaki2Y = -5;
     }
     kakiGerak = !kakiGerak; // Toggle kaki yang bergerak
+  } else {
+    // Berhenti ketika mencapai target
+    x = targetX;
+    y = targetY;
   }
 
+  // Menggambar Abe dengan skala
   abe2(x, y, rotasi);
 
   // Simpan posisi mouse saat ini untuk digunakan pada frame berikutnya
@@ -667,12 +686,115 @@ void abe2(float x, float y, float r) {
   popMatrix(); // Mengembalikan status transformasi sebelumnya
 }
 
+void badan2(float x, float y) {
+  float badanX = x;
+  float badanY = y;
+
+  float celanaX;
+  float celanaY;
+
+  fill(#ffc381);
+  ellipse(x - 34, y - 38, 20, 18);  // Telinga kanan
+  ellipse(x + 52, y - 38, 20, 18);  // Telinga kiri
+  rect(x, y - 8, 18.9, 9.9);        // Leher
+  ellipse(x + 9.5, y - 42, 83, 74); // Kepala
+
+  fill(#7d2c0f);
+  pushMatrix();
+  translate(x + 40, y - 55);
+  rotate(radians(-10));
+  ellipse(0, 0, 28, 45); // Rambut kiri
+  popMatrix();
+
+  pushMatrix();
+  translate(x - 22, y - 55);
+  rotate(radians(10));
+  ellipse(0, 0, 28, 45); // Rambut kanan
+  popMatrix();
+
+  ellipse(x + 8, y - 75, 65, 30); // Rambut tengah
+
+  fill(3);
+  rect(x, y - 45, 29, 7);        // Tangkai kacamata tengah
+  ellipse(x - 8, y - 35, 35, 30); // Kacamata kanan
+  ellipse(x + 30, y - 35, 35, 30); // Kacamata kiri
+
+  pushMatrix();
+  translate(x - 35, y - 55);
+  rotate(radians(25));
+  rect(0, 0, 19, 9); // Tangkai kanan
+  popMatrix();
+
+  pushMatrix();
+  translate(x + 35, y - 45);
+  rotate(radians(-25));
+  rect(0, 0, 19, 9); // Tangkai kiri
+  popMatrix();
+
+  fill(#ffc381);
+  ellipse(x - 8, y - 35, 27, 20); // Mata kanan kulit
+  fill(#ffffff);
+  ellipse(x - 5, y - 33, 17, 15); // Mata kanan putih
+  fill(#552200);
+  ellipse(x - 4, y - 32, 10, 10); // Mata kanan coklat
+
+  fill(#ffc381);
+  ellipse(x + 30, y - 35, 27, 20); // Mata kiri kulit
+  fill(#ffffff);
+  ellipse(x + 26, y - 33, 17, 15); // Mata kiri putih
+  fill(#552200);
+  ellipse(x + 24, y - 32, 10, 10); // Mata kiri coklat
+
+  fill(#f36a2f);
+  ellipse(x + 11, y - 22, 9, 10); // Hidung dalam
+  fill(#ffa966);
+  ellipse(x + 11, y - 20, 11, 10); // Hidung luar
+
+  fill(#ce3011);
+  bezier(x, y - 13, x + 5, y - 6, x + 22, y - 6, x + 20, y - 13); // Mulut
+
+  fill(#c73a0f);
+  quad(badanX, badanY, badanX - 30, badanY + 22, badanX - 14.5, badanY + 29, badanX + 7, badanY + 20); // Lengan kanan
+  quad(badanX + 21, badanY, badanX + 50, badanY + 22, badanX + 35.5, badanY + 29, badanX + 7, badanY + 20); // Lengan kiri
+
+  //badan
+  fill(#fd5e1a);
+  beginShape();
+  vertex(x, y);
+  vertex(x -= 13, y += 10);
+  vertex(x, y += 43);
+  celanaX = x;
+  celanaY = y;
+  vertex(x += 48, y);
+  vertex(x, y -= 43);
+  vertex(x -= 14, y -= 10);
+  endShape();
+
+  //Celana
+  fill(#545a51);
+  beginShape();
+  vertex(celanaX, celanaY);
+  vertex(celanaX, celanaY += 20);
+  vertex(celanaX += 19, celanaY);
+  vertex(celanaX, celanaY -= 9);
+  vertex(celanaX += 10, celanaY);
+  vertex(celanaX, celanaY += 9);
+  vertex(celanaX += 19, celanaY);
+  vertex(celanaX, celanaY -= 20);
+  vertex(celanaX -= 46, celanaY);
+  endShape();
+}
+
+///////ABI/////////
+
+//Pantai
 void drawPantai2() {
   fill(244, 164, 96);
   noStroke();
   rect(0, 300, 1280, 700);
 }
 
+//Jalan
 void drawJalan2() {
   //Jalan
   fill(128, 128, 128);
@@ -684,6 +806,7 @@ void drawJalan2() {
   endShape(CLOSE);
 }
 
+// Garis zebra di tengah jalan
 void drawGarisJalan() {
   stroke(255);
   strokeWeight(4); 
@@ -718,6 +841,10 @@ void drawWave() {
 }
 
 void scene3() {
+
+  // Pasang surut air lautnya
+  float waveOffset = 0;
+
   background(135, 206, 235);
 
   // Memperbarui posisi awan
@@ -733,6 +860,7 @@ void scene3() {
   drawPantai();
   drawOcean();
 
+  ///ABEE///
   // Update posisi x dan y berdasarkan pergerakan mouse
   float targetX = mouseX;
   float dx = targetX - x;
@@ -804,18 +932,6 @@ void gambarPompaDanSelang2(float x, float y) {
   // Gambar bagian bawah pompa
   fill(255, 0, 0);
   rect(x - 15, y + 75, 50, 10);
-
-  // Memeriksa apakah selang telah mencapai posisi akhir
-  if (selangM <= x - selangHorizontalPanjang && selangN <= y - selangVertikalPanjang + 150 && selangA >= x + selangHorizontalPanjang && selangB <= y - selangVertikalPanjang + 100) {
-    roketTerbang = true;
-  }
-
-  if (roketTerbang) {
-    gambarRoket(roketX, roketY);
-    roketY -= roketSpeed;
-  } else {
-    gambarRoket(1025, 500);
-  }
 }
 
 void drawPantai() {
@@ -839,8 +955,8 @@ void drawOcean() {
   noStroke();
 
   // Warna gradasi
-  color startColor = color(173, 216, 230); // Biru muda
-  color endColor = color(0, 105, 148);    // Biru tua
+  color startColor = color(173, 216, 230); // Biru young dump
+  color endColor = color(0, 105, 148);    // Biru old
 
   // Jumlah segmen gradasi
   int segments = 15;
@@ -855,7 +971,7 @@ void drawOcean() {
     vertex(0, height - i * 25);
     vertex(100, height - i * 25);
 
-    // Bentuk laut untuk gradasi
+    // Bentyk laut buat gradien ngab
     bezierVertex(250, 600 - i * 20, 700, 500 - i * 15, 900, 520 - i * 15);
     bezierVertex(1100, 555 - i * 15, 1000, 400 - i * 5, 1280, 300);
 
