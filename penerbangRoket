@@ -23,11 +23,22 @@ float selangVertikalPanjang = 60; // Panjang selang vertikal
 boolean pompaAktif = false;
 boolean pompaAktif2 = false; // Status pompa aktif atau tidak
 
-// Variabel untuk animasi roket
+// Variabel untuk animasi roket di scene 1
 boolean roketTerbang = false;
+boolean roketGagal = false;
+boolean naik = true;
 float roketX = 1025;
 float roketY = 500;
+float roketYOriginal = 500;
 float roketSpeed = 3;
+float roketTurunSpeed = 2;
+float roketMaxHeight = 100;
+
+// Variabel untuk animasi roket di scene 3
+boolean roketTerbangScene3 = false;
+float roketXScene3 = 575;
+float roketYScene3 = 450;
+float roketSpeedScene3 = 3;
 
 void setup() {
   size(1280, 720);
@@ -73,17 +84,17 @@ void draw() {
   background(135, 206, 235); // Langit biru
   
   //time 1-5 tampilkan scene 1
-  if ((t > 0) && (t <= 4000)) {
+  if ((t > 0) && (t <= 1000)) {
     scene1();
   }
 
   //time 6-10 tampilkan scene 2
-  if ((t >= 4001) && (t < 5000)) {
+  if ((t >= 1001) && (t < 1500)) {
     scene2();
   }
 
   //time 11-15 tampilkan scene 3
-  if ((t >= 5001) && (t < 10000)) {
+  if ((t >= 1501) && (t < 3000)) {
     scene3();
   }
 
@@ -148,17 +159,26 @@ void scene1() {
   // Simpan posisi mouse saat ini untuk digunakan pada frame berikutnya
   prevMouseX = mouseX;
   prevMouseY = mouseY;
-  
+
   // Menggambar dan menggerakkan roket jika selang telah mencapai posisi akhir
   if (selangX >= 900 + selangHorizontalPanjang && selangY <= 600 + 80 - selangVertikalPanjang) {
     roketTerbang = true;
   }
   if (roketTerbang) {
-    gambarRoket(roketX, roketY);
-    roketY -= roketSpeed;
-  } else {
-    gambarRoket(1025, 500);
+    if (naik) {
+      roketY -= roketSpeed;
+      if (roketY <= roketYOriginal - 200) { // Batasi ketinggian terbang
+        naik = false;
+      }
+    } else {
+      roketY += roketTurunSpeed;
+      if (roketY >= roketYOriginal) { // Kembali ke posisi semula
+        roketTerbang = false;
+        roketY = roketYOriginal;
+      }
+    }
   }
+  gambarRoket(roketX, roketY);
 }
 
 void gambarPompaDanSelang(float x, float y) {
@@ -762,6 +782,18 @@ void scene3() {
   // Simpan posisi mouse saat ini untuk digunakan pada frame berikutnya
   prevMouseX = mouseX;
   prevMouseY = mouseY;
+
+  // Memeriksa apakah selang telah mencapai posisi akhir
+  if (selangM <= 450 - selangHorizontalPanjang && selangN <= 550 - selangVertikalPanjang + 150 && selangA >= 450 + selangHorizontalPanjang && selangB <= 550 - selangVertikalPanjang + 100) {
+    roketTerbangScene3 = true;
+  }
+
+  if (roketTerbangScene3) {
+    gambarRoket(roketXScene3, roketYScene3);
+    roketYScene3 -= roketSpeedScene3;
+  } else {
+    gambarRoket(roketXScene3, roketYScene3);
+  }
 }
 
 void gambarPompaDanSelang2(float x, float y) {
@@ -807,14 +839,14 @@ void gambarPompaDanSelang2(float x, float y) {
 
   // Memeriksa apakah selang telah mencapai posisi akhir
   if (selangM <= x - selangHorizontalPanjang && selangN <= y - selangVertikalPanjang + 150 && selangA >= x + selangHorizontalPanjang && selangB <= y - selangVertikalPanjang + 100) {
-    roketTerbang = true;
+    roketTerbangScene3 = true;
   }
 
-  if (roketTerbang) {
-    gambarRoket(roketX, roketY);
-    roketY -= roketSpeed;
+  if (roketTerbangScene3) {
+    gambarRoket(roketXScene3, roketYScene3);
+    roketYScene3 -= roketSpeedScene3;
   } else {
-    gambarRoket(1025, 500);
+    gambarRoket(roketXScene3, roketYScene3);
   }
 }
 
