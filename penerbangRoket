@@ -1,6 +1,9 @@
 int t = 1;
 boolean scene1Done = false; // Flag untuk menandakan bahwa scene 1 sudah selesai
 boolean scene2Done = false; // Flag untuk menandakan bahwa scene 2 sudah selesai
+boolean waitForScene2 = false; // Flag untuk menandakan bahwa sedang menunggu sebelum pindah ke scene 2
+boolean waitForScene3 = false; // Flag untuk menandakan bahwa sedang menunggu sebelum pindah ke scene 3
+int sceneChangeTime; // Waktu saat scene selesai
 /////pandu//////
 // Variabel global
 float x, y, easing = 0.05, rotasi = 30;
@@ -95,25 +98,28 @@ void setup() {
 }
 
 void draw() {
-
-  //time 1-5 tampilkan scene 1
-  if ((t > 0) && (t <= 500)) {
+  if (!scene1Done) {
     scene1();
-  }
-
-  //time 6-10 tampilkan scene 2
-  if ((t >= 501) && (t < 10000)) {
+  } else if (waitForScene2) {
+    // Tetap render frame kosong atau animasi penantian
+    waitAnimation();
+    if (millis() - sceneChangeTime >= 10000) {
+      waitForScene2 = false;
+      sceneChangeTime = millis(); // Reset waktu untuk scene 2
+    }
+  } else if (!scene2Done) {
     scene2();
-  }
-
-  //time 11-15 tampilkan scene 3
-  if ((t >= 10001) && (t < 15000)) {
+  } else if (waitForScene3) {
+    // Tetap render frame kosong atau animasi penantian
+    if (millis() - sceneChangeTime >= 100) {
+      waitForScene3 = false;
+      sceneChangeTime = millis(); // Reset waktu untuk scene 3
+    }
+  } else {
     scene3();
   }
-
-  t++;
-
 }
+
 
 void scene1() {
   background(135, 206, 235); // Langit biru
@@ -122,7 +128,7 @@ void scene1() {
   updateCloudPositions();
 
   // Menggambar Matahari
-  drawSun(1000, 100, 50); // Adjust parameters as needed
+  drawSun(1000, 100, 50);
 
   // Menggambar awan
   drawClouds();
@@ -169,14 +175,13 @@ void scene1() {
   // Memanggil fungsi untuk menggambar dan menggerakkan pompa dan selang
   gambarPompaDanSelang(900, 600);
 
-  //gerak abe
+  // gerak Abe
   abe(x, y, rotasi);
 
   // Simpan posisi mouse saat ini untuk digunakan pada frame berikutnya
   prevMouseX = mouseX;
   prevMouseY = mouseY;
-  
-    
+
   // Menggambar dan menggerakkan roket jika selang telah mencapai posisi akhir
   if (selangX >= 900 + selangHorizontalPanjang && selangY <= 600 + 80 - selangVertikalPanjang) {
     roketTerbang = true;
@@ -192,11 +197,81 @@ void scene1() {
       if (roketY >= roketYOriginal) { // Kembali ke posisi semula
         roketTerbang = false;
         roketY = roketYOriginal;
+        scene1Done = true; // Tandai bahwa scene 1 sudah selesai
+        waitForScene2 = true; // Mulai menunggu sebelum pindah ke scene 2
+        sceneChangeTime = millis(); // Catat waktu saat scene 1 selesai
       }
     }
   }
   gambarRoket(roketX, roketY);
 }
+
+void waitAnimation() {
+   background(135, 206, 235); // Langit biru
+
+  // Memperbarui posisi awan
+  updateCloudPositions();
+
+  // Menggambar Matahari
+  drawSun(1000, 100, 50);
+
+  // Menggambar awan
+  drawClouds();
+
+  // Menggambar Laut
+  drawSea();
+
+  // Menggambar Perahu
+  drawBoat(300, 520);
+
+  // Menggambar Pantai
+  drawBeach();
+
+  // Menggambar Bangunan Sekolah
+  drawSchool();
+
+  // Menggambar Jalan
+  drawRoad();
+
+  // Menggambar Pohon Cemara
+  drawPineTrees();
+
+  ///ABEE///
+  // Update posisi x dan y berdasarkan pergerakan mouse
+  float targetX = mouseX;
+  float dx = targetX - x;
+  x += dx * easing;
+
+  float targetY = mouseY;
+  float dy = targetY - y;
+  y += dy * easing;
+
+  // Update posisi kaki berdasarkan pergerakan mouse
+  if (mouseY != prevMouseY) {
+    if (kakiGerak) {
+      kaki1Y = -5;
+      kaki2Y = 0;
+    } else {
+      kaki1Y = 0;
+      kaki2Y = -5;
+    }
+    kakiGerak = !kakiGerak; // Toggle kaki yang bergerak
+  }
+  // Memanggil fungsi untuk menggambar dan menggerakkan pompa dan selang
+  gambarPompaDanSelang(900, 600);
+
+  // gerak Abe
+  abe(x, y, rotasi);
+
+  // Simpan posisi mouse saat ini untuk digunakan pada frame berikutnya
+  prevMouseX = mouseX;
+  prevMouseY = mouseY;
+
+  
+  gambarRoket(roketX, roketY);
+}
+
+
 
 /////////rahman//////////
 void gambarPompaDanSelang(float x, float y) {
@@ -699,6 +774,7 @@ void scene2() {
     // Berhenti ketika mencapai target
     x = targetX;
     y = targetY;
+
   }
 
   // Menggambar Abe dengan skala
@@ -707,6 +783,13 @@ void scene2() {
   // Simpan posisi mouse saat ini untuk digunakan pada frame berikutnya
   prevMouseX = mouseX;
   prevMouseY = mouseY;
+  
+  // Tandai bahwa scene 2 sudah selesai setelah 10 detik
+  if (millis() - sceneChangeTime >= 10000) {
+    scene2Done = true;
+    waitForScene3 = true;
+    sceneChangeTime = millis(); // Catat waktu saat scene 2 selesai
+  }
 }
 
 void abe2(float x, float y, float r) {
